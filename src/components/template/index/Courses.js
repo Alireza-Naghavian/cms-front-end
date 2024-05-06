@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AddCourseModal from "./AddCourseModal";
 import CourseItem from "@/components/modules/CourseItem/CourseItem";
 import styles from '@/styles/Course.module.css'
-function Courses() {
+function Courses({courses}) {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const hideAddCourseModal = () => setShowAddCourseModal(false);
   return (
@@ -19,15 +19,15 @@ function Courses() {
           </a>
         </div>
         <ul className={styles.courses_list}>
-          {/* {data.map((course) => (
+          {courses?.map((course) => (
             <CourseItem key={course._id} {...course} />
-          ))} */}
+          ))}
         </ul>
       </section>
 
       {showAddCourseModal && (
         <AddCourseModal
-          //   getCourses={getCourses}
+        
           hideAddCourseModal={hideAddCourseModal}
         />
       )}

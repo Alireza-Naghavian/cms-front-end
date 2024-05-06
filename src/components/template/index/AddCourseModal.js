@@ -1,9 +1,35 @@
 import React, { useState } from "react";
 import styles from "@/styles/Modal.module.css";
-function AddCourseModal({hideAddCourseModal, getCourses}) {
+import useCreateCourse from "@/hooks/useCreateCourse";
+import { useQueryClient } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+function AddCourseModal({ hideAddCourseModal }) {
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
+  const { creating, isCreateLoading } = useCreateCourse();
   const addNewCourse = async (event) => {
     event.preventDefault();
+    await creating(
+      { title },
+      {
+        onSuccess: (data) => {
+          Swal.fire({
+            icon: "success",
+            title: data.message,
+          });
+          hideAddCourseModal();
+          setTitle("");
+          queryClient.invalidateQueries({ queryKey: ["courses/all"] });
+        },
+        onError: (data) => {
+          Swal.fire({
+            icon: "error",
+            title: "خطای ناشناخته !",
+            text: data.message,
+          });
+        },
+      }
+    );
   };
   return (
     <div className={styles.modal_container} id="add-new-course-modal">
@@ -26,8 +52,12 @@ function AddCourseModal({hideAddCourseModal, getCourses}) {
             />
           </div>
 
-          <button type="submit" className={styles.update_btn}>
-            ایجاد دوره
+          <button
+            disabled={isCreateLoading}
+            type="submit"
+            className={styles.update_btn}
+          >
+            {isCreateLoading ? "...درحال ایجاد" : "ایجاد پروژه"}
           </button>
         </form>
       </div>
