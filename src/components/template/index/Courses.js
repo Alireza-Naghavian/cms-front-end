@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import AddCourseModal from "./AddCourseModal";
 import CourseItem from "@/components/modules/CourseItem/CourseItem";
-import styles from '@/styles/Course.module.css'
-function Courses({courses}) {
+import styles from "@/styles/Course.module.css";
+function Courses({ courses }) {
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
   const hideAddCourseModal = () => setShowAddCourseModal(false);
   return (
@@ -19,17 +19,20 @@ function Courses({courses}) {
           </a>
         </div>
         <ul className={styles.courses_list}>
-          {courses?.map((course) => (
-            <CourseItem key={course._id} {...course} />
-          ))}
+          {courses?.map((course) => {
+            return (
+              <CourseItem
+                key={course._id}
+                title={course?.title}
+                id={course?._id}
+              />
+            );
+          })}
         </ul>
       </section>
 
       {showAddCourseModal && (
-        <AddCourseModal
-        
-          hideAddCourseModal={hideAddCourseModal}
-        />
+        <AddCourseModal hideAddCourseModal={hideAddCourseModal} />
       )}
     </>
   );

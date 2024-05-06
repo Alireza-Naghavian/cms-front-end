@@ -2,17 +2,41 @@ import React, { useState } from "react";
 import styles from "@/styles/Course.module.css";
 import EditModal from "@/components/template/index/EditModal";
 import DeleteModal from "@/components/template/index/DeleteModal";
-function CourseItem({ title, _id }) {
+import useRemoveCourse from "@/hooks/useRemoveCourse";
+import { useQueryClient } from "@tanstack/react-query";
+import useUpdateCourse from "@/hooks/useUpdateCourse";
+
+function CourseItem({ title, id }) {
+  console.log(title);
+  const qeuryClient = useQueryClient();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const hideEditModal = () => setShowEditModal(false);
   const hideDeleteModal = () => setShowDeleteModal(false);
-  const removeCourse = async () => {
-   
+  const { mutate: UpdateCourse } = useUpdateCourse();
+  const { mutate: delCourse } = useRemoveCourse();
+  const removeCourse = () => {
+    delCourse(
+      { id },
+      {
+        onSuccess: () => {
+          qeuryClient.invalidateQueries({ queryKey: ["courses/all"] });
+          hideDeleteModal();
+        },
+      }
+    );
   };
   const updateCourse = async (event, title) => {
     event.preventDefault();
-
+    UpdateCourse(
+      { id, title },
+      {
+        onSuccess: () => {
+          hideEditModal();
+          qeuryClient.invalidateQueries({ queryKey: ["courses/all"] });
+        },
+      }
+    );
   };
   return (
     <>
